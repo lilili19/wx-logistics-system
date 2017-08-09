@@ -1,0 +1,28 @@
+@charset "utf-8";
+.new-msg-center { padding: 20px 12px; }
+.new-msg-section { border: 1px solid #999;border-left:0;border-right:0;margin-top:-1px; font-size:12px;}
+.new-msg-section-on{border: 1px solid #e60012;color:#e60012; position:relative; background-color:#fdd000;}
+.new-msg-section .new-tit { position: relative; padding: 10px; font-size: 14px; color: #6e6e6e; }
+.new-msg-section-on .new-tit{color:#e60012;}
+.new-msg-section-on .ydxz{width:30px; height:40px; position:absolute; display:block;top:0;left:0; background:url(../images/xzbg.png) no-repeat left top;}
+.new-msg-section .new-tit .new-user { display: inline-block; position: relative; }
+.new-msg-section .new-tit .new-user .new-elps { max-width: 121px;color:#09f; font-weight:bold; }
+.new-msg-section .new-tit .new-user .new-ico { position: absolute; top: -4px; right: -10px; width: 9px; height: 9px; border-radius: 5px; background: #970709; }
+.new-msg-section .new-tit .new-time { position: absolute; top: 10px; right: 10px;color:#f60; font-weight:bold; font-size:20px; }
+.new-msg-section .new-cont { font-size: 14px; color: #6e6e6e; }
+.new-msg-section-on .new-cont{border-top: 1px solid #e60012;color:#e60012;}
+.new-msg-section .new-cont-txt { display: block; padding: 0 10px 10px; font-size:12px; }
+.new-msg-section .new-a-open, .new-msg-section .new-a-close { display: block; height: 13px; background: #e0dfdf; background: -webkit-gradient(linear, left top, left bottom, from(#e9e8e8), to(#d0cfcf)); background: -moz-linear-gradient(center top, #e9e8e8, #d0cfcf); text-align: center; }
+.new-msg-section .new-a-close .new-icon { background-position: 0 -385px; }
+.new-a-more { display: block; margin: 0 10px; padding: 12px 0; border-top: 1px dotted #bebebe; font-size: 14px; color: #6e6e6e; text-align: right; }
+.new-mu_tmb { _display: inline; float: left; clear: both; margin: .7em 10px .6em; }
+.new-mu_tmb2 { _display: inline; float: left; clear: both; margin:.new-79em 10px .6em;
+}
+.new-mu_l2w { clear: both; margin: .5em 10px; border-top: 1px dotted #bebebe; }
+.new-mu_l2a { display: block; overflow: hidden; clear: both; padding: .22em 5px; }
+.new-mu_l2 { _zoom: 1; }
+.new-mu_l2 .new-mu_tmb { margin: .2em 10px .1em 0; }
+.new-mu_l2cw { display: block; overflow: hidden; _zoom: 1; }
+.new-mu_l2h { display: block; margin: 5px 0 .3em; font-size: 14px; font-weight: normal; color: #6e6e6e; }
+.new-mu_l2c { font-size: 16px; color: #6e6e6e; }
+.new-mu_l2c del { padding-left: 20px; }
