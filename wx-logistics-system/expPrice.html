@@ -1,0 +1,281 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="m.aplun.net" />
+<meta name="applicable-device" content="mobile" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>快递价格查询 — 爱普伦物流系统·触摸版</title>
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/messages.css" rel="stylesheet" type="text/css">
+<link href="css/common.css" rel="stylesheet" type="text/css">
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layer/layer.js"></script>
+<script src="js/vue.min.js"></script>
+<script src="js/login.js"></script>
+
+<script>
+//检测是否处于登录状态或以前登录过
+doLogin();
+
+var priceData = {};
+$(window).load(function() {
+	$("#status").fadeOut();
+	$("#preloader").delay(350).fadeOut("slow");  
+})
+
+//更多信息关闭
+function close1() {
+  $('#information').hide();
+}
+</script>
+</head>
+<body>
+<div class="mobile">
+	<!--页面加载 开始-->
+  <div id="preloader">
+    <div id="status">
+      <p class="center-text"><span>拼命加载中···</span></p>
+    </div>
+  </div>
+  <div id="preloader1">
+      <img src="images/load.gif" alt="">
+  </div>
+  <!--页面加载 结束--> 
+  <!--header 开始-->
+  <header>
+    <div class="header"> <a class="new-a-back" href="javascript:history.back();"> <span><img src="images/iconfont-fanhui.png"></span> </a>
+      <h2>快递价格查询</h2>
+      <div class="head_right" style="top:10px;"><a href="index.html"><img src="images/iconfont-shouye.png" height="26"></a></div>
+      </div>
+  </header>
+  <!--header 结束-->
+  
+<section class="main" id="app">
+  <form class="form-freight">
+    <!-- 运费查询 -->
+    <ul class="fm-list">
+      <li class="fm-item">
+        <label>国家简码</label>
+        <input id="weightInput1" class="input-text-line" type="text" name="" value="" placeholder="请输入国家简码" 
+         onchange="GetCountry('http://test.a-56.com:5903/ashx/a2.ashx', 'test', 1, this)" >
+        <a href="GuoJia_search.html" class="search_btn">
+        <!-- <img src="images/iconfont-sousuo.png" width="28" height="28"> -->
+        </a>
+      </li>
+      <li class="fm-item">
+        <label>渠道类型</label>
+        <select name="ddlTransit" id="ddlTransit" class="txt">
+                                <option selected="selected" value="">请选择</option>
+                                <option value="DHL">DHL</option>
+                                <option value="EMS">EMS</option>
+                                <option value="FEDEX">FEDEX</option>
+                                <option value="TNT">TNT</option>
+                                <option value="UPS">UPS</option>
+                                <option value="Z专线">Z专线</option>
+                            </select>
+      </li>
+      <li class="fm-item">
+        <label>包裹类型</label>
+        <select class="txt" id="ComType">
+          <option value="">请选择</option>
+          <option value="WPX">WPX</option>
+          <option value="DOC">DOC</option> 
+        </select>
+      </li>
+    
+      <li class="fm-item">
+        <label>计费重(kg)</label>
+        <input id="weightInput2" class="input-text-line" type="number" name="" value="" placeholder="输入快件重量">
+      </li>
+      <li class="fm-item" style="padding-top:10px;" id="hwxz">
+        <label>货物性质</label>
+        <input type="checkbox" value="1" style="width:15px;height:15px; vertical-align:text-top;">普货&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" value="2" style="width:15px;height:15px; vertical-align:text-top;">电池货&nbsp;&nbsp;&nbsp;&nbsp;
+      </li>
+     <!--  <li class="fm-item fm-item-more">
+        <label>体积</label>
+        <div class="label-content clearfix">
+          <div class="label-cols"> <span class="label-box">
+            <label>长</label>
+            <input id="longInput" type="number" name="">
+            <span class="unit">cm</span></span> </div>
+          <div class="label-cols"> <span class="label-box">
+            <label>宽</label>
+            <input id="wideInput" type="number" name="" placeholder="">
+            <span class="unit">cm</span></span> </div>
+          <div class="label-cols"> <span class="label-box">
+            <label>高</label>
+            <input id="highInput" type="number" name="" placeholder="">
+            <span class="unit">cm</span></span> </div>
+        </div>
+      </li> -->
+    </ul>
+    <!-- 运费查询 end -->
+    
+    <div class="grid-btn">
+      <input id="rateQuery" type="button" class="btn  btn-small3" value="价格查询" @click="doThis()">
+    </div>
+  </form>
+  <div class="new-msg-center" style="display:none;">
+    <div class="new-msg-section" v-for="(item,index) in items">
+        <div class="new-tit">
+          <span class="new-user"> 
+            <span class="new-elps">{{item.PriceName}}&nbsp;&nbsp;除{{item.VWTFM}}</span>
+          </span>
+          <span class="new-time">{{item.Charge}} {{item.Currency}}</span> 
+        </div>
+        <div class="new-cont clf">
+          <span class="new-cont-txt fl">计算方式：{{item.Exp}}</span>
+          <a class="new-cont-txt fr" href="javascript:;" @click="showInfo(index)">
+            <img src="images/jia.jpg" height="16" width="16" style="vertical-align:middle"/>  更多信息
+          </a> 
+        </div>
+        <!-- <div class="new-cont clf">
+           <span class="new-cont-txt fl">{{data1.Remark}}</span>
+           <a class="new-cont-txt fr" href="#">
+           <img src="images/jia.jpg" height="16" width="16" style="vertical-align:middle"/> {{data1.b}}</a>
+        </div> -->
+    </div>
+  </div> 
+  <!-- 显示更多信息 -->
+  <div style="position:fixed;left:0;top:0;z-index:10000;background-color:#eee;display:none;height:100%;width:100%;" id="information">
+        <table border='1' width="100%" height="30%">
+            <tr>
+              <td class="tr">报价名</td>
+              <td colspan='3'>{{fdata.PriceName}}</td>
+            </tr>
+            <tr>
+              <td class="tr">方式</td>
+              <td>{{fdata.Transit}}</td>
+              <td class="tr">总金额</td>
+              <td>{{fdata.Charge}}</td>
+            </tr>
+            <tr>
+              <td class="tr">时效</td>
+              <td>{{fdata.Times}}</td>
+              <td class="tr">单价</td>
+              <td>{{fdata.UnitPrice}}</td>
+            </tr>
+            <tr>
+              <td class="tr">体积系数</td>
+              <td>{{fdata.VWTFM}}</td>
+              <td class="tr">币制</td>
+              <td>{{fdata.Currency}}</td>
+            </tr>
+            <tr>
+              <td class="tr">公式</td>
+              <td colspan='3'>{{fdata.Exp}}</td>
+            </tr>
+        </table>
+        <div style="max-height:58%;overflow:hidden;overflow-y:auto;background-color:#ddd;">
+          <div class="gdxx"></div>
+        </div> 
+        <div style="text-align:center;cursor:pointer;padding:10px 0px;width:40%;background-color:pink;border-radius: 7px;margin:5px auto;" onClick="close1();">返 回</div>      
+  </div>
+  <!-- 显示更多信息end -->
+</section> 
+<div class="m_user w" style="margin-top:0%;">
+  	<a href="user.html" class="admin">【业务员】李某某</a>
+    <a href="#">修改密码</a>
+    <a href="#">安全退出</a> 
+</div>
+  <div class="copyright">Copyright © 2012-2015 爱普伦物流系统 m.aplun.net 版权所有</div>
+</div>
+
+<div class="gotop backtop" style="display:none;" onclick="oscrollTop()"></div>
+<script>
+$(function(){
+  $(document).scroll(function(){
+    if ($("body").scrollTop() != 0) {
+      $('.backtop').show();
+    }else{
+      $('.backtop').hide();
+    }
+  })
+})
+
+  new Vue({
+      el:'#app',
+      data:{
+        items:[],
+        fdata:{},
+      },
+      methods : {
+          doThis : function(){
+              var CountryNO=$.trim($("#weightInput1").val());//国家简码
+              var Transit=$.trim($("#ddlTransit option:selected").text());//渠道类型
+              if(Transit=="请选择") Transit="";
+              var PackDoc=$.trim($("#ComType option:selected").text());//包裹类型 
+              if(PackDoc=="请选择") PackDoc="";
+              var GWT=$.trim($("#weightInput2").val());//实重
+              var Nature='';//货物性质
+              for (var i = 0; i < $('#hwxz input').length; i++) {
+                 if ($('#hwxz input').eq(i).attr("checked")) {
+                    if (Nature!='')  Nature+=",";
+                    Nature += $('#hwxz input').eq(i).val();
+                 }
+              };
+              var arr = CountryNO.split(',');
+              CountryNO=arr[0];
+              if (CountryNO == ''||CountryNO == null) {
+                layer.tips('国家简码不能为空','#weightInput1', {tips: 1});
+                return false;
+              }
+              
+              if (GWT == null||GWT == '') {
+                layer.tips('实重不能为空','#weightInput2', {tips: 1});
+                return false;
+              }
+              if (GWT <= 0) {
+                layer.tips('实重必须大于0','#weightInput2', {tips: 1});
+                return false;
+              }
+              //模板层加载出现
+              $('#preloader1').show();
+              $('.new-msg-center').hide();
+              var _self=this;
+              var data = 'CountryNO='+CountryNO+'&GWT='+GWT+'&Transit='+Transit+'&PackDoc='+PackDoc+'&Nature='+Nature;
+              //alert(data);
+              $.ajax({
+                type:"post",
+                url: host+'/CC/calPrice/saleExpPrice',
+                data:data,
+                dataType:"json",
+                success:function (data) {
+                  //模板层消失
+                  $('#preloader1').hide();  
+
+                  $('.new-msg-center').show();
+                  
+                  priceData = data.rows;
+                  _self.items = data.rows; 
+                },
+                error:function(){
+                  //document.write('您未登录 <a href="/wx/login.html">请登录</a>')
+                }
+              }) 
+          },
+          showInfo : function(ind){
+              var PriceID=this.items[ind].PriceID;
+              var _self=this;
+              $.ajax({
+                type:"post",
+                url:host+'/CC/calPrice/saleExpPriceRemark',
+                data:'PriceID='+PriceID,
+                dataType:"text",
+                success:function (data) {
+                    $('#information').show();
+                    _self.fdata=_self.items[ind];
+                    $('.gdxx').html(data);
+                },
+                error:function(){
+                  alert('服务器数据错误');
+                }
+              }) 
+          }
+      }
+  })
+</script>
+</body>
+</html>

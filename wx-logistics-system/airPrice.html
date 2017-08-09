@@ -1,0 +1,212 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="m.aplun.net" />
+<meta name="applicable-device" content="mobile" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>空运价格查询 — 爱普伦物流系统·触摸版</title>
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/messages.css" rel="stylesheet" type="text/css">
+<link href="css/common.css" rel="stylesheet" type="text/css">
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/login.js"></script>
+<script src="layer/layer.js"></script>
+<script src="js/vue.min.js"></script>
+<script>
+doLogin();
+$(window).load(function() {
+	$("#status").fadeOut();
+	$("#preloader").delay(350).fadeOut("slow");
+})
+</script>
+</head>
+
+<body>
+<div class="mobile">
+	<!--页面加载 开始-->
+  <div id="preloader">
+    <div id="status">
+      <p class="center-text"><span>拼命加载中···</span></p>
+    </div>
+  </div>
+  <div id="preloader1">
+      <img src="images/load.gif" alt="">
+  </div>
+  <!--页面加载 结束--> 
+  <!--header 开始-->
+  <header>
+    <div class="header"> <a class="new-a-back" href="javascript:history.back();"> <span><img src="images/iconfont-fanhui.png"></span> </a>
+      <h2>空运价格查询</h2>
+      <div class="head_right" style="top:10px;"><a href="index.html"><img src="images/iconfont-shouye.png" height="26"></a></div>
+      </div>
+  </header>
+  <!--header 结束-->
+  
+<section class="main" id="app">
+  <form class="form-freight">
+    <!-- 运费查询 -->
+    <ul class="fm-list">
+      <li class="fm-item">
+        <label>三字码</label>
+        <input id="CityNO" class="input-text-line" type="text" name="" value="" placeholder="请输入机场三字码">
+        <a href="sanzima_search.html" class="search_btn"><img src="images/iconfont-sousuo.png" width="28" height="28"></a>
+      </li>
+      <li class="fm-item">
+        <label>城市名</label>
+        <input id="CityName" class="input-text-line" type="text" name="" value="" placeholder="输入城市名">
+       <!--  <a href="sanzima_search.html" class="search_btn"><img src="images/iconfont-sousuo.png" width="28" height="28"></a> -->
+      </li>
+      <!-- <li class="fm-item">
+        <label>重量(kg)</label>
+        <input id="weightInput" class="input-text-line" type="number" name="" value="" placeholder="输入重量">
+      </li> -->
+      <li class="fm-item">
+        <label>起始地</label>
+        <input id="start" class="input-text-line" type="number" name="" value="" placeholder="输入起始地名称">
+      </li>
+    </ul>
+    <!-- 运费查询 end -->
+    
+      <!-- <div class="new-cont clf"> 
+          <table width="100%" style="margin:0 auto;">
+              <tr>
+                <th>MIN</th>
+                <th>45KG</th>
+                <th>100KG</th>
+                <th>300KG</th>
+                <th>500KG</th>
+                <th>1000KG</th>
+              </tr>
+              <tr>
+                <td>item.min}}</td>
+                <td>item.kg45}}</td>
+                <td>item.kg100}}</td>
+                <td>item.kg300}}</td>
+                <td>item.kg500}}</td>
+                <td>item.kg1000}}</td>
+              </tr>
+          </table>
+      </div> -->
+
+    <div class="grid-btn">
+      <input id="rateQuery" type="button" class="btn  btn-small3" value="销售价查询" name="" @click="doThis()">
+      <!-- <input id="rateQuery" type="button" class="btn  btn-small3" value="销售成本查询" name="">
+      <input id="rateQuery" type="button" class="btn  btn-small3" value="成本价查询" name=""> -->
+    </div>
+  </form>
+  <div class="new-msg-center">
+    <div class="new-msg-section" v-for="(item,index) in items">
+      <div class="new-tit"> 
+        <span class="new-user"> 
+          <span class="new-elps">航线：&nbsp;{{item.name}}</span> 
+        </span> 
+        <span class="new-time">币制:{{item.cur}}</span> 
+      </div>
+      <div class="new-cont clf"> 
+        <span class="new-cont-txt fl">时效：请咨询</span> 
+        <span class="new-cont-txt fr">可走货物：请咨询</span> 
+      </div>
+      <div class="new-cont clf"> 
+          <table width="100%" style="margin:0 auto;">
+              <tr>
+                <th>MIN</th>
+                <th>45KG</th>
+                <th>100KG</th>
+                <th>300KG</th>
+                <th>500KG</th>
+                <th>1000KG</th>
+              </tr>
+              <tr>
+                <td>{{item.min}}</td>
+                <td>{{item.kg45}}</td>
+                <td>{{item.kg100}}</td>
+                <td>{{item.kg300}}</td>
+                <td>{{item.kg500}}</td>
+                <td>{{item.kg1000}}</td>
+              </tr>
+          </table>
+      </div>
+      <!-- <div class="new-cont clf"> 
+        <a class="new-cont-txt fr" href="javascript:;"  @click="showInfo(index)"><img src="images/jia.jpg" height="16" width="16" style="vertical-align:middle"> 备注信息</a> 
+      </div> -->
+    </div>
+    <!-- <div class="new-msg-section" id="">
+      <div class="new-tit"> <span class="new-user"> <span class="new-elps">航空公司-CA</span> </span> <span class="new-time">154.91</span> </div>
+      <div class="new-cont clf"> <span class="new-cont-txt fl">时效：3~5日</span> <span class="new-cont-txt fr">单价：12.00</span> </div>
+      <div class="new-cont clf"> <span class="new-cont-txt fl">可走货物：电池，仿牌，液体</span> <a class="new-cont-txt fr" href="#"><img src="images/jia.jpg" height="16" width="16" style="vertical-align:middle"/> 详细情况</a> </div>
+    </div>
+    <div class="new-msg-section" id="">
+      <div class="new-tit"> <span class="new-user"> <span class="new-elps">航空公司-CA</span> </span> <span class="new-time">219.88</span> </div>
+      <div class="new-cont clf"> <span class="new-cont-txt fl">时效：3~5日</span> <span class="new-cont-txt fr">单价：12.00</span> </div>
+      <div class="new-cont clf"> <span class="new-cont-txt fl">可走货物：电池，仿牌，液体</span> <a class="new-cont-txt fr" href="#"><img src="images/jia.jpg" height="16" width="16" style="vertical-align:middle"/> 详细情况</a> 
+      </div>
+    </div> -->
+  </div>
+  <!-- <div class="bl_more"><a href="#">加载更多</a></div> -->
+</section>
+<!-- <div class="m_user w">
+  	<a href="user.html" class="admin">【业务员】李某某</a>
+    <a href="#">修改密码</a>
+    <a href="#">安全退出</a>  
+</div> -->
+  <div class="copyright">Copyright © 2012-2015 爱普伦物流系统 m.aplun.net 版权所有</div>
+</div>
+
+<div class="gotop backtop" style="display:none;" onclick="oscrollTop()"></div>
+<script>
+
+$(function(){
+  $(document).scroll(function(){
+    if ($("body").scrollTop() != 0) {
+      $('.backtop').show();
+    }else{
+      $('.backtop').hide();
+    }
+  })
+})
+
+
+   new Vue({
+      el:'#app',
+      data:{
+        items:[],
+
+      },
+      methods:{
+          doThis:function() {
+              var CityNO=$.trim($("#CityNO").val());//三字码
+              var CityName=$.trim($("#CityName").val());//城市名
+              var start=$.trim($("#start").val());//起始地
+              if (CityNO==''||CityNO==null||CityNO==undefined) {
+                if (CityName==''||CityName==null||CityName==undefined) {
+                    layer.tips('三字码和城市名不能同时为空','#CityNO', {tips: 1});
+                    return false;
+                }
+              }
+              var data='CityName='+CityName+'&CityNO='+CityNO+'&start='+start;
+              //模板层加载出现
+              $('#preloader1').show();
+              var _self=this;
+              $.ajax({
+                type:"post",
+                url: host+'/CC/calPrice/saleAirPrice',
+                data:data,
+                dataType:"json",
+                success:function (data) {
+                  //模板层消失
+                  $('#preloader1').hide();  
+
+                  _self.items = data.rows; 
+
+                }
+              });
+          },
+          showInfo:function(ind) {
+            alert(ind);
+          }
+      }
+   })
+</script>
+</body>
+</html>

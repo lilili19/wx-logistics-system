@@ -1,0 +1,61 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="m.aplun.net" />
+<meta name="applicable-device" content="mobile" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>空运价格查询 — 爱普伦物流系统·触摸版</title>
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/messages.css" rel="stylesheet" type="text/css">
+<link href="css/common.css" rel="stylesheet" type="text/css">
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/login.js"></script>
+<script src="layer/layer.js"></script>
+<script src="js/vue.min.js"></script>
+<script>
+	$(function() {
+		$('#preloader1').show();
+		var company=getCompany();
+		$.ajax({
+			type:"post",
+			url:host+'/CC/Fuel/doList',
+			data:'company='+company,
+			dataType:"json",
+			success:function (data) {
+				$('#app').show();
+				$('#preloader1').hide();
+				items=data.rows;
+				new Vue({
+		    		el:'#app',
+		    		data:{items}
+		    	})
+			},
+			error:function(){
+				document.write('服务器连接失败');
+			}
+		});
+	})	    	
+</script>
+</head>
+<style>
+	table td{text-align: center;background-color: #ddd;width: 50%;padding: 10px 0px;}
+</style>
+<body>
+	<!--页面加载 开始-->
+	<div id="preloader1">
+       <img src="images/load.gif" alt="">
+    </div>
+    <!--页面加载 结束--> 
+    <div id="app" style="display:none;">
+    	<table v-for="item in items" border="1px solid #eee;" width="100%">
+	    	<tr>
+	    		<td>{{item.Transit}}</td>
+	    		<td>{{item.Fuel}}</td>
+	    	</tr>
+	    </table>
+    </div>
+    
+
+</body>
+</html>

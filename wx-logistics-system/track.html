@@ -1,0 +1,152 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="m.aplun.net" />
+<meta name="applicable-device" content="mobile" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>运件追踪 — 爱普伦物流系统·触摸版</title>
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/member.css" rel="stylesheet" type="text/css">
+<link href="css/common.css" rel="stylesheet" type="text/css">
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layer/layer.js"></script>
+<script src="js/vue.min.js"></script>
+<script src="js/login.js"></script>
+
+<script>
+
+    $(window).load(function() {
+        var company = getCompany();
+        if(company==undefined || company==""){
+          document.write("company");
+          return false; 
+        }
+      	$("#status").fadeOut();
+      	$("#preloader").delay(350).fadeOut("slow");
+    })
+  
+    function replaceAll(s1, sp, sn) {
+        var r = new RegExp(sp.replace(/([\(\)\[\]\{\}\^\$\+\-\*\?\.\"\'\|\/\\])/g, "\\$1"), "ig");
+        return s1.replace(r, sn);
+    }
+    
+
+</script>
+</head>
+
+<body>
+	<!--页面加载 开始-->
+  <div id="preloader">
+    <div id="status">
+      <p class="center-text"><span>拼命加载中···</span></p>
+    </div>
+  </div>
+  <div id="preloader1">
+      <img src="images/load.gif" alt="">
+  </div>
+  <!--页面加载 结束--> 
+  <!--header 开始-->
+  <header>
+    <div class="header"> <a class="new-a-back" href="javascript:history.back();"> <span><img src="images/iconfont-fanhui.png"></span> </a>
+      <h2>运件追踪</h2>
+      <div class="head_right" style="top:10px;"><a href="index.html"><img src="images/iconfont-shouye.png" height="26"></a></div>
+      </div>
+  </header>
+  <!--header 结束-->
+  <div class="main" id="app">
+    <section class="com-info">        
+      <div class="input-box">
+        <form id="queryForm" action="/result.jsp" method="get">
+          <input type="text" id="queryInput" class="num-inp" name="nu" placeholder="请输入快递单号" autocomplete="off">
+          <input type="button" id="queryBtn" class="query-btn" @click="doThis();">
+          <div class="scan" id="scanBtn"></div>
+          <div class="clear hidden" id="clearBtn"></div>
+        </form>
+      </div>
+    </section>
+    <div class="main" style="display:none;">
+      <div class="new-order">
+		      <div class="new-order-flow new-p-re">
+            <div>{{RefNo}}&nbsp;&nbsp;{{TrackNo}}&nbsp;&nbsp;{{Des}}</div>
+			       <span class="new-order-arr"></span>
+                <ul class="new-of-storey">
+    				      <!-- <li>
+											<span class="icon on"></span>
+							           <span>感谢您在京东购物，欢迎您再次光临！&nbsp;&nbsp;京东快递</span>
+                			<span>2015-06-12 11:52:32</span>
+						      </li> -->
+            		  <li v-for="item in items">
+											<span class="icon"></span>
+							           <span>{{item.location}}&nbsp;&nbsp;{{item.activity}}</span>
+                			<span>{{item.dateTime}}</span>
+						      </li>
+            		 <!--  <li>
+											<span class="icon"></span>
+							           <span>您提交了订单，请等待系统确认&nbsp;&nbsp;客户</span>
+                		<span>2015-06-08 23:36:45</span>
+						      </li>  -->
+            		</ul>
+					</div>
+	     </div>
+    </div>
+  </div>
+  <div class="copyright">Copyright © 2012-2015 爱普伦物流系统 m.aplun.net 版权所有</div>
+
+  <div class="gotop backtop" style="display:none;" onclick="oscrollTop()"></div>
+  <script>
+$(function(){
+  $(document).scroll(function(){
+    if ($("body").scrollTop() != 0) {
+      $('.backtop').show();
+    }else{
+      $('.backtop').hide();
+    }
+  })
+})
+  
+    new Vue({
+        el:'#app',
+        data:{
+            items:[],
+            RefNo:'',
+            TrackNo:'',
+            Des:'' 
+        },
+        methods:{
+            doThis:function(){
+                var queryInput=$('#queryInput').val();//快递单号
+                if (queryInput=='') {
+                  layer.tips('请输入快递单号','#queryInput', {tips: 1});
+                  return false;
+                }
+                $('#preloader1').show();
+                var company = getCompany('company');
+                var _self=this;
+                $.ajax({
+                    type:"post",
+                    url:host+'/CC/Track3/getTrack',
+                    data:'company='+company+'&nos='+queryInput,
+                    dataType:"json",
+                    success:function (data) {
+                        if (data==''||data==null||data==undefined) {
+                            $('#preloader1').hide();
+                            alert('无此运单号');
+                            return false;
+                        }
+                        $('#preloader1').hide();
+                        $('.main').show();
+                        data= data[0];
+                        _self.items=data.Track;
+                        _self.RefNo=data.RefNo;
+                        _self.TrackNo=data.TrackNo;
+                        _self.Des=data.Des;
+                    }
+                })
+            }
+        }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,242 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="m.aplun.net" />
+<meta name="applicable-device" content="mobile" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>偏远地区查询 — 爱普伦物流系统·触摸版</title>
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/common.css" rel="stylesheet" type="text/css">
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layer/layer.js"></script>
+<script src="js/vue.min.js"></script>
+<script src="js/login.js"></script>
+<script>
+$(window).load(function() {
+	$("#status").fadeOut();
+	$("#preloader").delay(350).fadeOut("slow");
+})
+</script>
+</head>
+<body>
+<div class="mobile">
+	<!--页面加载 开始-->
+  <div id="preloader">
+    <div id="status">
+      <p class="center-text"><span>拼命加载中···</span></p>
+    </div>
+  </div>
+  <div id="preloader1">
+      <img src="images/load.gif" alt="">
+  </div>
+  <!--页面加载 结束--> 
+  <!--header 开始-->
+  <header>
+    <div class="header"> <a class="new-a-back" href="javascript:history.back();"> <span><img src="images/iconfont-fanhui.png"></span> </a>
+      <h2>偏远地区查询</h2>
+      <div class="head_right" style="top:10px;"><a href="index.html"><img src="images/iconfont-shouye.png" height="26"></a></div>
+      </div>
+  </header>
+  <!--header 结束-->
+  
+<section class="main" id="app">
+  <form class="form-freight">
+    <!-- 运费查询 -->
+    <ul class="fm-list">
+      <li class="fm-item">
+        <label>转运方式</label>
+        <select name="ddlTransit" id="ddlTransit" class="txt">
+          <option selected="selected" value="">请选择</option>
+          <option value="DHL">DHL</option>
+          <option value="UPS">UPS</option>
+       <!--    <option value="FEDEX">FEDEX</option>
+          <option value="TNT">TNT</option>  -->        
+      </select>
+      </li>
+      <li class="fm-item">
+        <label>国家简码</label>
+        <input id="weightInput1" class="input-text-line" type="text" name="" value="" placeholder="请输入国家简码" onchange="GetCountry('http://test.a-56.com:5903/ashx/a2.ashx', 'test', 1, this)" >
+      </li>
+      <li class="fm-item">
+        <label>城市</label>
+        <input id="weightInput2" class="input-text-line" type="text" name="" value="" placeholder="输入城市名">
+      </li>
+      <li class="fm-item">
+        <label>邮编</label>
+        <input id="weightInput3" class="input-text-line" type="text" name="" value="" placeholder="输入邮编">
+      </li>
+    </ul>
+    <!-- 运费查询 end -->
+    
+    <div class="grid-btn">
+      <input id="rateQuery" type="button" class="btn btn-submit" value="查询" name="" @click="rateQuery(1)">
+    </div>
+
+    <div class="pianyuan" style="color:red;text-align:center;margin-bottom:10px;"></div>
+
+  </form>
+  <section class="express-list" style="display:none;">
+    <table>
+        <tbody>
+          <tr>
+            <th>转运方式</th><th>国家简码</th><th>城市</th><th>起始邮编</th><th>截止邮编</th>
+          </tr>
+          <tr>
+            <!-- <td colspan="5" style="background-color:#e1e1e1;" @click="rateQuery(3)">点击或下拉更新</td> -->
+          </tr>
+          <tr v-for="item in items">
+            <td>{{item.Transit}}</td><td>{{item.CountryNO}}</td><td>{{item.City}}</td><td>{{item.PostCode1}}</td><td>{{item.PostCode2}}</td>
+          </tr>
+      </tbody>
+    </table>
+    <div class="jiazai" style="text-align:center;padding:10px 0px;background-color:#eee;"  @click="rateQuery(2)">点击或上拉加载更多</div>
+    <div style="text-align:center;padding:10px 0px;">
+        总共<span>{{rsCount}}</span>条数据&nbsp;&nbsp;
+    </div>
+    
+  </section>
+</section>
+  <div class="copyright">Copyright © 2012-2015 爱普伦物流系统 m.aplun.net 版权所有</div>
+</div>
+
+<div class="gotop backtop" style="display:none;" onclick="oscrollTop()"></div>
+<script>
+
+$(function(){
+  $(document).scroll(function(){
+    if ($("body").scrollTop() != 0) {
+      $('.backtop').show();
+    }else{
+      $('.backtop').hide();
+    }
+  })
+})
+
+
+
+  var i=1;
+  var vm=new Vue({
+      el:'#app',
+      data:{
+        items:{},
+        PageCount:1,
+        rsCount:0,
+      },
+      methods:{
+          rateQuery:function(maz) {
+              if ($('.jiazai').html()=='加载数据中。。。') {
+                return false;
+              }
+              $('.pianyuan').html('');
+              if (maz==2) {
+                if (i > this.PageCount) {
+                  $('.jiazai').html('没有更多了');
+                  return false;
+                }
+              }else if(maz==1){
+                i=1;
+                this.rsCount=0;
+              }else if (maz==3) {
+                i=1;
+                this.rsCount=0;
+                var mkb=1;
+              }
+               var company=getCompany();
+               var Transit=$.trim($("#ddlTransit option:selected").text());//转运方式
+               if (Transit=='请选择') {
+                  Transit='';
+               }
+               var CountryNO=$.trim($("#weightInput1").val());//国家简码
+               if (CountryNO==''||CountryNO==null||CountryNO==undefined) {
+                  layer.tips('国家简码不能为空','#weightInput1', {tips: 1});
+                  return false;
+               }
+               var arr = CountryNO.split(',');
+               CountryNO=arr[0];
+               var City=$.trim($("#weightInput2").val());//城市名
+               var PostCode=$.trim($("#weightInput3").val());//邮编
+               var data='company='+company+'&Transit='+Transit+'&CountryNO='+CountryNO+'&City='+City+'&PostCode='+PostCode+'&PageIndex='+i;
+              if (i!=1) {
+                $('.jiazai').html('加载数据中。。。');
+              }else{
+                if (mkb == ''||mkb == null||mkb == undefined) {
+                  //模板层加载出现
+                  $('#preloader1').show();
+                }  
+              }
+              var _self=this;
+              $.ajax({
+                  type:"post",
+                  url: host+'/CC/Remote/doList',
+                  data:data,
+                  dataType:"json",
+                  success:function (data) {
+                      $('#preloader1').hide();
+                      $('.express-list').show();         
+                      $('.jiazai').html('点击或上拉加载更多');
+                      i++;
+                      if (i==2) {
+                        _self.items=data.rows;
+                        if (data.rows==''||data.rows==null||data.rows==undefined||data.rows=='{}') {
+                            $('.jiazai').hide();
+                            return false;
+                        }
+                        if ((City!='' && City!=null && City!=undefined) || (PostCode!='' && PostCode!=null && PostCode!=undefined)) {
+                            $('.pianyuan').html('(这是偏远地区)');
+                        }
+                      }else{
+                         _self.items=_self.items.concat(data.rows);
+                      }
+                      _self.PageCount=data.PageCount;//总页面数
+                      _self.rsCount=data.rsCount;//总条数
+                      if (_self.rsCount==''||_self.rsCount==null||_self.rsCount==undefined) {
+                        _self.rsCount=0;
+                      }
+                      if (data.PageCount==1) {
+                          $('.jiazai').hide();
+                      }else{
+                          $('.jiazai').show();
+                      }
+                  },
+                  error:function(){
+                      if (i==1) {
+                        alert('数据请求出错');
+                      }else{
+                        $('.jiazai').html('加载失败');
+                      }
+                  }
+              }) 
+          }
+      }
+  })
+
+
+  var startY,endY;
+  document.addEventListener('touchstart',function() {
+    startY=event.touches[0].clientY;
+  },false);
+  document.addEventListener('touchend',function() {
+    endY=event.changedTouches[0].clientY;
+    if (endY-startY < 0) {
+      // alert('上拉');
+      if($(window).scrollTop()>=$(document).height()-$(window).height()){
+          if ($('.jiazai').html()=='点击或上拉加载更多') {              
+            vm.rateQuery(2);
+          }  
+      }
+    }
+    if (endY-startY > 0) {
+      //alert('下拉');
+      if($(window).scrollTop() <= 0){
+          // if ($('.jiazai').html()=='点击或上拉加载更多') {              
+          //   vm.rateQuery(2);
+          // }  
+      }
+    }
+  },false); 
+
+
+</script>
+</body>
+</html>

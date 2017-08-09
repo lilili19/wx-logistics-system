@@ -1,0 +1,213 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="m.aplun.net" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no">
+<title>物流系统</title
+><link href="css/owl.carousel.css" rel="stylesheet">
+<link href="css/public.css" rel="stylesheet" type="text/css" />
+<link href="css/index.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="layer/layer.js"></script>
+<script src="js/login.js"></script>
+<script src="js/vue.min.js"></script>
+<style>
+    .li{width: 100%;height: 30%;overflow: hidden;}
+    .li_inner{width: 1000%;overflow: hidden;height: 100%;}
+    .li_inner img{width: 10%;height: 100%;float: left;}
+    .liUl{overflow: hidden;margin: 10px auto;}
+    .liUl li{float: left;width: 10px;height: 10px;background-color: #7fc242;border-radius: 50%;margin-right: 10px;cursor: pointer;}
+</style>
+<script type="text/javascript">
+
+window.onresize=function() {
+    var ww=document.documentElement.clientWidth;
+    document.getElementsByTagName('html')[0].style.fontSize=ww/100+'px';
+}
+$(document).ready(function(){
+	$(".mall_list a").click(function(){
+		var index = layer.open({
+			type: 1,
+			title: false,
+			closeBtn: false,
+			shadeClose: false,
+			offset: '25%',
+			content: "<div class='no_login_show'><h1>亲！您还没登录哦！</h1><a href='login.html'>马上登录</a><a href='register.html'>免费注册</a><a href='javascript:layer.closeAll();'>取消</a></div>"
+		});
+	});
+  var ww=document.documentElement.clientWidth;
+  document.getElementsByTagName('html')[0].style.fontSize=ww/100+'px';
+
+    var url=host + '/wxcc/doIndex';
+    var data='';
+    $.ajax({
+        type:'post',
+        url:url,
+        data:data,
+        dataType:'text',
+        success:function(data) {
+            data = eval('('+data+')');
+            new Vue({
+                el:'#app',
+                data:data,
+                methods:{
+                  dianji:dianji,
+                }
+            });
+            $('.liUl').width(data.banners.length*20 + 'px');
+            $('.liUl li').eq(0).css('background-color','red');
+        }
+    });
+    var x=0,timer1=null,timer2=null;
+    function move(){//图片滚动函数
+        clearInterval(timer2);
+        var start=document.getElementsByClassName('li')[0].scrollLeft;//起始位置
+        var end=$('.li_inner img').eq(0).width()*x;//结束位置
+        var step=0;//起始步数
+        var stepmax=40;//最大步数
+        var everystep=(end-start)/stepmax;//每步所走的距离
+        timer2=setInterval(function (){
+          step++;
+          if (step==stepmax) {
+            step=0;
+            clearInterval(timer2);
+          };
+          start+=everystep;
+          document.getElementsByClassName('li')[0].scrollLeft=start;
+          $('.liUl li').eq(x).css('background-color','red').siblings().css('background-color','');
+        },15)
+    }
+    // 第一步：自动走
+    function automove(){
+      clearInterval(timer1);
+      timer1=setInterval(function (){//每2秒换一张图片
+        x++;
+        if (x>=$('.li_inner img').length) {
+          x=0;
+        };
+        move();
+        // listyle();
+      },2000)
+    }
+    automove();
+    function dianji(index) {
+        $('.liUl li').eq(index).css('background-color','red').siblings().css('background-color','');
+        x=index;
+        move();
+        automove();     
+    }
+});
+
+function kaifazhong(_id){
+  layer.tips('请耐心等待一下，我们正在拼命开发中···',_id);
+}
+
+function gdgn() {
+  if (document.getElementById('gdgn').style.display=='block') {
+    $('#gdgn').hide();
+  }else{
+    $('#gdgn').show();
+  }
+}
+
+</script>
+</head>
+<body>
+<div class="mobile"  id="app">
+	<div class="header" style="position: relative;">
+    	  <div class="m_logo">
+          <img :src="logo"><span> {{title}}<span>
+        </div>
+        <div class="m_search">
+          <a href="javascript:gdgn();"><img src="images/avatar.png" width="40"></a>
+        </div>
+        <div id="gdgn">
+            <ul>
+                <li>联系我们</li>
+                <li>联系我们</li>
+                <li>联系我们</li>
+                <li>联系我们</li>
+            </ul>
+        </div>
+  </div>
+	<div class="top w">
+        <div class="li">
+            <div class="li_inner">
+                <img :src="host+item.img" alt="" v-for="item in banners">
+            </div>
+        </div>
+        <ul class="liUl">
+            <li v-for="(item,index) in banners" @click="dianji(index)"></li>
+        </ul>
+
+        <div class="m_nav">
+        	  <a href="expPrice.html"><img src="images/m-index_10.png"><span>快递价格</span></a>
+            <a href="airPrice.html"><img src="images/m-index_12.png"><span>空运价格</span></a>
+            <!-- <a href="/track.html"><img src="images/m-index_14.png"><span>运单查询</span></a> -->
+            <a href="track.html"><img src="images/m-index_16.png"><span>运件追踪</span></a>
+            <a href="javascript:void(0);" id="msg_bijia" onclick="kaifazhong('#msg_bijia')"><img src="images/m-index_22.png"><span>我要发货</span></a>
+            <a href="fuel.html"><img src="images/m-index_24.png"><span>燃油费</span></a>
+            <a href="remote.html"><img src="images/m-index_26.png"><span>偏远地区</span></a>
+            <!-- <a href="http://m.aplun.net/article/index.html"><img src="images/m-index_27.png"><span>客户管理</span></a> -->
+        </div>
+  </div>
+  <div class="m_mall w">
+  	<div class="mall_title"><span>最新消息</span><em><a href="#">更多</a></em></div>
+    <!-- <div class="newslist1">
+   	 <ul>
+                <li class="clf">
+                  <a href="/news/detail/353">
+                    <div class="txt">
+                        <h4>某某物流华南区2012总结表彰暨2013开工庆典大会</h4>
+                        <div class="upTime">
+                            <span>2015/07/24</span></div>
+                    </div>
+                </a></li>
+                  <li class="clf">
+                  <a href="/news/detail/353">
+                    <div class="txt">
+                        <h4>市场出现倒春寒 北京土地出让昨现“一冷一</h4>
+                        <div class="upTime">
+                            <span>2015/07/24</span></div>
+                    </div>
+                </a></li>
+                  <li class="clf">
+                  <a href="/news/detail/353">
+                    <div class="txt">
+                        <h4>北京市张王安顺：要在一张图上规划京津冀的</h4>
+                        <div class="upTime">
+                            <span>2015/07/24</span></div>
+                    </div>
+                </a></li>
+      </ul>
+    </div>
+       <iframe src="http://www.jssgj56.com/news" frameborder="0" style="width:100%;">
+          
+       </iframe> -->
+  </div>  
+  <!-- <div class="m_user w">
+  	<a href="user.html" class="admin">【业务员】李某某</a>
+    <a href="#">修改密码</a>
+    <a href="#">安全退出</a>  
+  </div> -->
+  <div class="copyright">Copyright © 2012-2015 爱普伦物流系统 m.aplun.net 版权所有</div>
+</div>
+<div class="gotop backtop" style="display:none;" onclick="oscrollTop()"></div>
+
+</body>
+</html>
+<script type="text/javascript">
+
+$(function(){
+    $(document).scroll(function(){
+      if ($("body").scrollTop() != 0) {
+        $('.backtop').show();
+      }else{
+        $('.backtop').hide();
+      }
+    });
+
+})
+</script>
